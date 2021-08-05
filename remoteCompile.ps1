@@ -22,7 +22,7 @@ $compileHostKeyFingerprint = "ssh-ed25519 255 ns0JzdwwsByT2fAioJok1Rlra2YUlkToS6
 
 function gitUpload() {
     foreach ($item in (git status --porcelain)) {
-        $item = $item -creplace "( *(\?|M|A) +)", ""
+        $item = $item -creplace "( *(\?|M|A)+ +)", ""
         $session.PutFiles($pathGitRepository + $item.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/" + ($item).Replace($pathExtensionLaTeXProject, "")).Check()
         Write-Host $item
     }
