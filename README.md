@@ -29,9 +29,10 @@ You have to set the following setting / magic numbers in remoteCompile.ps1:
 
 ## Requirements
 + remote (linux) server
-+ ssh key to connect to the remote server
++ ssh key to connect to the remote server (see: [Set up SSH public key authentication](https://winscp.net/eng/docs/guide_public_key))
 + `Compile` Folder in the home directory
     + copy `compile.ps1` into the `Compile` Folder
     + copy `clean.ps1` into the `Compile` Folder
++ WinSCP installed on the client ([WinSCP Homepage](https://winscp.net/eng/index.php))
 + all needed latex packages installed on the remote server
 + set settings
