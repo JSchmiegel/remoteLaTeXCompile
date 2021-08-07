@@ -1,6 +1,7 @@
 param (
     [switch] $help,
     [switch] $clean,
+    [switch] $fullUpload,
     [string[]] $files
 )
 ###########################
@@ -21,7 +22,7 @@ $compileHostKeyFingerprint = "ssh-ed25519 255 ns0JzdwwsByT2fAioJok1Rlra2YUlkToS6
 ###########################
 
 function gitUpload() {
-    foreach ($item in (git status --porcelain)) {
+    foreach ($item in (git status --porcelain -uall)) {
         $item = $item -creplace "( *(\?|M|A)+ +)", ""
         $session.PutFiles($pathGitRepository + $item.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/" + ($item).Replace($pathExtensionLaTeXProject, "")).Check()
         Write-Host $item
@@ -29,9 +30,12 @@ function gitUpload() {
 }
 
 function fileUpload($path) {
-    $item = $path.Replace(".\", "")
-    $session.PutFiles($pathLaTeXProject + $item.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/").Check()
-    Write-Host $item
+    if ($path.Contains(".\")) {
+        $path = $path.Replace(".\", "")
+        $path = $pathLaTeXProject + $path
+    }
+    $session.PutFiles($path.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/" + $path.Replace($pathLaTeXProject, "").Replace("\", "/")).Check()
+    Write-Host $path
 }
 
 function remoteCompile {
@@ -77,6 +81,7 @@ try {
         Write-Host "    -clean          cleans the Compile folder from tmp files and recompiles the LaTeX project"
         Write-Host "    -files <paths>  only uploads the given files (seperated by ',')"
         Write-Host "                    the paths are relative to the remoteCompile script"
+        Write-Host "    -fullUpload     uploads all files"
         Write-host ""
     }elseif ($clean){
         remoteClean
@@ -90,7 +95,10 @@ try {
             foreach ($file in $files) {
                 fileUpload($file)
             }
-        }else {
+        }elseif($fullUpload){
+            fileUpload($pathLaTeXProject + "\*")
+        }
+        else{
             gitUpload
         }
         remoteCompile
