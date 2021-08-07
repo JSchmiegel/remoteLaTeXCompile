@@ -11,6 +11,7 @@ Start the remoteCompile.ps1 powershell script in the folder of your git reposito
         -clean          cleans the Compile folder from tmp files and recompiles the LaTeX project
         -files <paths>  only uploads the given files (seperated by ',')
                         the paths are relative to the remoteCompile script
+        -fullUpload     uploads all files
 
 
 
