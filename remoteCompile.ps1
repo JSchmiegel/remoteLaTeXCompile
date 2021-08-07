@@ -22,6 +22,7 @@ $compileHostKeyFingerprint = "ssh-ed25519 255 ns0JzdwwsByT2fAioJok1Rlra2YUlkToS6
 ###########################
 
 function gitUpload() {
+    gitcheckCreateFolder
     foreach ($item in (git status --porcelain -uall)) {
         $item = $item -creplace "( *(\?|M|A)+ +)", ""
         $session.PutFiles($pathGitRepository + $item.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/" + ($item).Replace($pathExtensionLaTeXProject, "")).Check()
@@ -36,6 +37,16 @@ function fileUpload($path) {
     }
     $session.PutFiles($path.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/" + $path.Replace($pathLaTeXProject, "").Replace("\", "/")).Check()
     Write-Host $path
+}
+
+function gitcheckCreateFolder(){
+    foreach ($item in (git status --porcelain)) {
+        if ($item -match "^.*\/$"){
+            $item = $item -creplace "( *(\?)+ +)", ""
+            ssh $compileHostUsername@$compileHost ("mkdir /home/" + $compileHostUsername + "/Compile/" + $item.Replace($pathExtensionLaTeXProject, ""))
+            Write-Host ("CREATE: /home/" + $compileHostUsername + "/Compile/" + $item.Replace($pathExtensionLaTeXProject, ""))
+        }
+    }
 }
 
 function remoteCompile {
