@@ -43,8 +43,11 @@ function gitcheckCreateFolder(){
     foreach ($item in (git status --porcelain)) {
         if ($item -match "^.*\/$"){
             $item = $item -creplace "( *(\?)+ +)", ""
-            ssh $compileHostUsername@$compileHost ("mkdir /home/" + $compileHostUsername + "/Compile/" + $item.Replace($pathExtensionLaTeXProject, ""))
-            Write-Host ("CREATE: /home/" + $compileHostUsername + "/Compile/" + $item.Replace($pathExtensionLaTeXProject, ""))
+            $newfolder = "/home/" + $compileHostUsername + "/Compile/" + $item.Replace($pathExtensionLaTeXProject, "")
+            if (!$session.FileExists($newfolder)) {
+                ssh $compileHostUsername@$compileHost ("mkdir " + $newfolder)
+                Write-Host ("CREATE: /home/" + $compileHostUsername + "/Compile/" + $item.Replace($pathExtensionLaTeXProject, ""))
+            }
         }
     }
 }
