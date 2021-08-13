@@ -24,9 +24,11 @@ $compileHostKeyFingerprint = "ssh-ed25519 255 ns0JzdwwsByT2fAioJok1Rlra2YUlkToS6
 function gitUpload() {
     gitcheckCreateFolder
     foreach ($item in (git status --porcelain -uall)) {
-        $item = $item -creplace "( *(\?|M|A)+ +)", ""
-        $session.PutFiles($pathGitRepository + $item.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/" + ($item).Replace($pathExtensionLaTeXProject, "")).Check()
-        Write-Host $item
+        if (! ($item -match "( *(D)+ +)")){ 
+            $item = $item -creplace "( *(\?|M|A)+ +)", ""
+            $session.PutFiles($pathGitRepository + $item.Replace("/", "\"), "/home/" + $compileHostUsername + "/Compile/" + ($item).Replace($pathExtensionLaTeXProject, "")).Check()
+            Write-Host $item
+        }
     }
 }
 
